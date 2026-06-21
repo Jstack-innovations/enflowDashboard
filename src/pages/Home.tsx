@@ -77,48 +77,48 @@ export default function Home() {
         if (data.status === "ok") {
           setDashboard(data.dashboard);
           setChecking(false);
-} else {
-  localStorage.removeItem("enflow_token");
-  localStorage.removeItem("enflow_user");
-  localStorage.removeItem("enflow_token_expiry");
-  if (data.message?.toLowerCase().includes("suspended")) {
-    setChecking(false);
-    setSuspended(true);
-  } else {
-    sessionStorage.setItem("auth_message", data.message ?? "Session ended. Please log in again.");
-    window.location.href = "/login";
-  }
-}
+        } else {
+          localStorage.removeItem("enflow_token");
+          localStorage.removeItem("enflow_user");
+          localStorage.removeItem("enflow_token_expiry");
+          if (data.message?.toLowerCase().includes("suspended")) {
+            setChecking(false);
+            setSuspended(true);
+          } else {
+            sessionStorage.setItem("auth_message", data.message ?? "Session ended. Please log in again.");
+            window.location.href = "/login";
+          }
+        }
       })
       .catch(() => { window.location.href = "/login"; });
   }, []);
-  
-  
-  const revenueData = dashboard?.stats?.daily_revenue ?? [];
-const recentOrders = dashboard?.stats?.recent_orders ?? [];
 
-if (suspended) return (
-  <div style={{ background: "#080502", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
-    <div style={{ background: "rgba(255,238,215,0.02)", border: "1px solid rgba(214,168,106,0.15)", borderRadius: 16, padding: "36px 28px", maxWidth: 400, width: "100%", textAlign: "center" }}>
-      <div style={{ fontSize: 32, marginBottom: 16 }}>🔒</div>
-      <h2 style={{ color: "#ffffff", fontSize: 20, fontWeight: 600, marginBottom: 8 }}>Account Suspended</h2>
-      <p style={{ color: "#aaaaaa", fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
-        Your account has been suspended. Please contact support to resolve this.
-      </p>
-      <a href="mailto:hello@getenflowai.online" style={{ display: "inline-block", background: "linear-gradient(135deg, #d6a86a, #b8864a)", color: "#0c0602", padding: "12px 28px", borderRadius: 100, fontSize: 13, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", textDecoration: "none" }}>
-        Contact Support
-      </a>
-      <div style={{ marginTop: 16 }}>
-        <button onClick={() => { window.location.href = "/login"; }} style={{ background: "none", border: "none", color: "#666", fontSize: 12, cursor: "pointer", letterSpacing: 1 }}>
-          ← Back to login
-        </button>
+
+  const revenueData = dashboard?.stats?.daily_revenue ?? [];
+  const recentOrders = dashboard?.stats?.recent_orders ?? [];
+
+  if (suspended) return (
+    <div style={{ background: "#080502", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
+      <div style={{ background: "rgba(255,238,215,0.02)", border: "1px solid rgba(214,168,106,0.15)", borderRadius: 16, padding: "36px 28px", maxWidth: 400, width: "100%", textAlign: "center" }}>
+        <div style={{ fontSize: 32, marginBottom: 16 }}>🔒</div>
+        <h2 style={{ color: "#ffffff", fontSize: 20, fontWeight: 600, marginBottom: 8 }}>Account Suspended</h2>
+        <p style={{ color: "#aaaaaa", fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
+          Your account has been suspended. Please contact support to resolve this.
+        </p>
+        <a href="mailto:hello@getenflowai.online" style={{ display: "inline-block", background: "linear-gradient(135deg, #d6a86a, #b8864a)", color: "#0c0602", padding: "12px 28px", borderRadius: 100, fontSize: 13, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", textDecoration: "none" }}>
+          Contact Support
+        </a>
+        <div style={{ marginTop: 16 }}>
+          <button onClick={() => { window.location.href = "/login"; }} style={{ background: "none", border: "none", color: "#666", fontSize: 12, cursor: "pointer", letterSpacing: 1 }}>
+            ← Back to login
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 
   if (checking) return (
-<div className={styles.layout}>
+    <div className={styles.layout}>
       <style>{`
         @keyframes home-shimmer {
           0% { transform: translateX(-100%); }
@@ -153,7 +153,6 @@ if (suspended) return (
               <Skeleton w={180} h={12} />
             </div>
           </div>
-
           <div className={styles.statsGrid}>
             {[1,2,3,4].map(n => <Skeleton key={n} w="100%" h={100} radius={16} />)}
           </div>
@@ -238,18 +237,18 @@ if (suspended) return (
             </div>
             <button
               onClick={async () => {
-  const token = localStorage.getItem("enflow_token");
-  if (token) {
-    await fetch(`${ENFLOW_API}/logout`, {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}` },
-    }).catch(() => {});
-  }
-  localStorage.removeItem("enflow_token");
-  localStorage.removeItem("enflow_user");
-  localStorage.removeItem("enflow_token_expiry");
-  window.location.href = "/login";
-}}
+                const token = localStorage.getItem("enflow_token");
+                if (token) {
+                  await fetch(`${ENFLOW_API}/logout`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` },
+                  }).catch(() => {});
+                }
+                localStorage.removeItem("enflow_token");
+                localStorage.removeItem("enflow_user");
+                localStorage.removeItem("enflow_token_expiry");
+                window.location.href = "/login";
+              }}
               className="flex items-center gap-2 px-3 py-2 w-full text-sm text-sidebar-foreground/50 hover:text-sidebar-foreground rounded-lg hover:bg-sidebar-accent/50"
             >
               <LogOut style={{ width: 16, height: 16 }} /> Log out
@@ -284,90 +283,61 @@ if (suspended) return (
 
           <main className={styles.content}>
             <div className={styles.hero}>
-  <div>
-    <p className="text-xs text-muted-foreground">{getLiveDate()} · {getServicePeriod()}</p>
-    {checking
-      ? <div style={{ marginTop: 6 }}><Skeleton w="60%" h={22} radius={6} /></div>
-      : <h1 style={{ fontSize: 22, fontWeight: 600, marginTop: 4 }}>Greetings, {dashboard?.account?.fullname ?? "there"}</h1>
-    }
-    {(() => {
-      const data = dashboard?.stats?.daily_revenue ?? [];
-      if (data.length < 2) return (
-        <p className="text-sm text-muted-foreground" style={{ marginTop: 4 }}>
-          No comparison data yet. Check back tomorrow.
-        </p>
-      );
-      const today = data[data.length - 1]?.revenue ?? 0;
-      const yesterday = data[data.length - 2]?.revenue ?? 0;
-      const pct = yesterday === 0 ? null : Math.round(((today - yesterday) / yesterday) * 100);
-      const up = pct !== null && pct >= 0;
-      return (
-        <p className="text-sm text-muted-foreground" style={{ marginTop: 4 }}>
-          {pct === null ? "No comparison data yet." : <>
-            You're trending{" "}
-            <span className={up ? "text-primary font-medium" : "text-destructive font-medium"}>
-              {up ? "+" : ""}{pct}%
-            </span>{" "}
-            vs yesterday. {up ? "Kitchen is on it." : "Let's push through."}
-          </>}
-        </p>
-      );
-    })()}
-  </div>
+              <div>
+                <p className="text-xs text-muted-foreground">{getLiveDate()} · {getServicePeriod()}</p>
+                {checking
+                  ? <div style={{ marginTop: 6 }}><Skeleton w="60%" h={22} radius={6} /></div>
+                  : <h1 style={{ fontSize: 22, fontWeight: 600, marginTop: 4 }}>Greetings, {dashboard?.account?.fullname ?? "there"}</h1>
+                }
+                {(() => {
+                  const data = dashboard?.stats?.daily_revenue ?? [];
+                  if (data.length < 2) return (
+                    <p className="text-sm text-muted-foreground" style={{ marginTop: 4 }}>
+                      No comparison data yet. Check back tomorrow.
+                    </p>
+                  );
+                  const today = data[data.length - 1]?.revenue ?? 0;
+                  const yesterday = data[data.length - 2]?.revenue ?? 0;
+                  const pct = yesterday === 0 ? null : Math.round(((today - yesterday) / yesterday) * 100);
+                  const up = pct !== null && pct >= 0;
+                  return (
+                    <p className="text-sm text-muted-foreground" style={{ marginTop: 4 }}>
+                      {pct === null ? "No comparison data yet." : <>
+                        You're trending{" "}
+                        <span className={up ? "text-primary font-medium" : "text-destructive font-medium"}>
+                          {up ? "+" : ""}{pct}%
+                        </span>{" "}
+                        vs yesterday. {up ? "Kitchen is on it." : "Let's push through."}
+                      </>}
+                    </p>
+                  );
+                })()}
+              </div>
               <div className={styles.heroActions}>
-<Button variant="outline" size="sm" className="gap-1.5">
-  <img src={ZaraLogo} alt="Zara" style={{ width: 16, height: 16, objectFit: "contain" }} /> Ask ZaraAI
-</Button>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <img src={ZaraLogo} alt="Zara" style={{ width: 16, height: 16, objectFit: "contain" }} /> Ask ZaraAI
+                </Button>
                 <Button size="sm" className="gap-1.5 bg-primary hover:bg-primary/90">
                   <Plus style={{ width: 16, height: 16 }} /> New order
                 </Button>
               </div>
             </div>
-            
-            
-{dashboard && (
- <StatusBanner
-  status={dashboard.account.status}
-  plan={dashboard.account.plan}
-  trialEndsAt={dashboard.account.trial_ends_at}
-  renewalDate={dashboard.account.renewal_date}
-  softwareUrl={dashboard.business.software_url}
-/>
-)}
+
+            {dashboard && (
+              <StatusBanner
+                status={dashboard.account.status}
+                plan={dashboard.account.plan}
+                trialEndsAt={dashboard.account.trial_ends_at}
+                renewalDate={dashboard.account.renewal_date}
+                softwareUrl={dashboard.business.software_url}
+              />
+            )}
 
             <div className={styles.statsGrid}>
-<StatCard 
-  icon={TrendingUp} 
-  label="Revenue today" 
-  value={dashboard?.stats ? `₦${Number(dashboard.stats.revenue_today).toLocaleString()}` : "₦0"} 
-  delta="" 
-  trend="flat" 
-  tint="primary" 
-/>
-<StatCard 
-  icon={ShoppingBag} 
-  label="Orders" 
-  value={dashboard?.stats ? String(dashboard.stats.orders_today) : "0"} 
-  delta="" 
-  trend="flat" 
-  tint="accent" 
-/>
-<StatCard 
-  icon={Utensils} 
-  label="Tables seated" 
-  value={dashboard?.stats ? `${dashboard.stats.tables_seated} / ${dashboard.stats.tables_total}` : "0 / 0"} 
-  delta="" 
-  trend="flat" 
-  tint="chart3" 
-/>
-<StatCard 
-  icon={MessageSquare} 
-  label="Zara credits used" 
-  value={dashboard?.zara ? `${dashboard.zara.credits_used} / ${dashboard.zara.credits}` : "0 / 0"} 
-  delta="" 
-  trend="flat" 
-  tint="muted" 
-/>
+              <StatCard icon={TrendingUp} label="Revenue today" value={dashboard?.stats ? `₦${Number(dashboard.stats.revenue_today).toLocaleString()}` : "₦0"} delta="" trend="flat" tint="primary" />
+              <StatCard icon={ShoppingBag} label="Orders" value={dashboard?.stats ? String(dashboard.stats.orders_today) : "0"} delta="" trend="flat" tint="accent" />
+              <StatCard icon={Utensils} label="Tables seated" value={dashboard?.stats ? `${dashboard.stats.tables_seated} / ${dashboard.stats.tables_total}` : "0 / 0"} delta="" trend="flat" tint="chart3" />
+              <StatCard icon={MessageSquare} label="Zara credits used" value={dashboard?.zara ? `${dashboard.zara.credits_used} / ${dashboard.zara.credits}` : "0 / 0"} delta="" trend="flat" tint="muted" />
             </div>
 
             <div className={styles.chartGrid}>
@@ -395,10 +365,11 @@ if (suspended) return (
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-<XAxis dataKey="day" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-<YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `₦${v / 1000}k`} />
-<Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 10, fontSize: 12 }} formatter={(v: number) => [`₦${v.toLocaleString()}`, "Revenue"]} />
-<Area type="monotone" dataKey="revenue" stroke="var(--color-primary)" strokeWidth={2.5} fill="url(#rev)" />               </AreaChart>
+                      <XAxis dataKey="day" stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="var(--color-muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `₦${v / 1000}k`} />
+                      <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 10, fontSize: 12 }} formatter={(v: number) => [`₦${v.toLocaleString()}`, "Revenue"]} />
+                      <Area type="monotone" dataKey="revenue" stroke="var(--color-primary)" strokeWidth={2.5} fill="url(#rev)" />
+                    </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -406,9 +377,9 @@ if (suspended) return (
               <div className="rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-5" style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-<div className="h-9 w-9 rounded-xl bg-accent text-accent-foreground grid place-items-center overflow-hidden">
-  <img src={ZaraLogo} alt="Zara" style={{ width: 28, height: 28, objectFit: "contain" }} />
-</div>
+                    <div className="h-9 w-9 rounded-xl bg-accent text-accent-foreground grid place-items-center overflow-hidden">
+                      <img src={ZaraLogo} alt="Zara" style={{ width: 28, height: 28, objectFit: "contain" }} />
+                    </div>
                     <div>
                       <div className="font-semibold">ZaraAI</div>
                       <div style={{ fontSize: 11, display: "flex", alignItems: "center", gap: 4 }} className="text-primary-foreground/70">
@@ -467,26 +438,26 @@ if (suspended) return (
                         <th className="font-medium py-3 pr-5 text-right">Time</th>
                       </tr>
                     </thead>
- <tbody className="divide-y divide-border">
-  {recentOrders.map((o: any) => (
-    <tr key={o.id} className="hover:bg-secondary/20 transition-colors">
-      <td className="px-5 py-3 font-medium text-xs">#{o.plate_no ?? o.id}</td>
-<td className="py-3">
-        <div className="font-medium text-sm">{o.name ?? "Guest"}</div>
-        <div className="text-muted-foreground" style={{ fontSize: 11 }}>{o.order_type}</div>
-      </td>
-      <td className="py-3 font-semibold text-sm">₦{Number(o.total_amount).toLocaleString()}</td>
-      <td className="py-3">
-        <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border ${statusTone[o.order_status] ?? "bg-muted text-muted-foreground border-border"}`}>
-          <Circle style={{ width: 6, height: 6 }} className="fill-current" />{o.order_status}
-        </span>
-      </td>
-      <td className="py-3 pr-5 text-right text-muted-foreground text-xs">
-        {new Date(o.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-      </td>
-    </tr>
-  ))}
-</tbody>
+                    <tbody className="divide-y divide-border">
+                      {recentOrders.map((o: any) => (
+                        <tr key={o.id} className="hover:bg-secondary/20 transition-colors">
+                          <td className="px-5 py-3 font-medium text-xs">#{o.plate_no ?? o.id}</td>
+                          <td className="py-3">
+                            <div className="font-medium text-sm">{o.name ?? "Guest"}</div>
+                            <div className="text-muted-foreground" style={{ fontSize: 11 }}>{o.order_type}</div>
+                          </td>
+                          <td className="py-3 font-semibold text-sm">₦{Number(o.total_amount).toLocaleString()}</td>
+                          <td className="py-3">
+                            <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border ${statusTone[o.order_status] ?? "bg-muted text-muted-foreground border-border"}`}>
+                              <Circle style={{ width: 6, height: 6 }} className="fill-current" />{o.order_status}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-5 text-right text-muted-foreground text-xs">
+                            {new Date(o.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -494,7 +465,7 @@ if (suspended) return (
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <div className="rounded-2xl bg-card border border-border p-5">
                   <h3 className="font-semibold text-sm">Top items today</h3>
-{(dashboard?.stats?.top_items ?? []).length === 0 ? (
+                  {(dashboard?.stats?.top_items ?? []).length === 0 ? (
                     <div style={{ marginTop: 16, textAlign: "center", padding: "20px 0" }}>
                       <div style={{ fontSize: 28, marginBottom: 8 }}>🍽️</div>
                       <p style={{ fontSize: 13, fontWeight: 500 }} className="text-muted-foreground">No items sold today yet.</p>
@@ -535,7 +506,13 @@ if (suspended) return (
                       {[
                         ...(dashboard?.connected_tools?.whatsapp ? [{ icon: Phone, label: "WhatsApp" }] : []),
                         ...(dashboard?.connected_tools?.social?.includes("instagram") ? [{ icon: Instagram, label: "Instagram" }] : []),
+                        ...(dashboard?.connected_tools?.social?.includes("facebook") ? [{ icon: Globe, label: "Facebook" }] : []),
                         ...(dashboard?.connected_tools?.delivery?.includes("chowdeck") ? [{ icon: Truck, label: "Chowdeck" }] : []),
+                        ...(dashboard?.connected_tools?.delivery?.includes("bolt") ? [{ icon: Truck, label: "Bolt Food" }] : []),
+                        ...(dashboard?.connected_tools?.delivery?.includes("glovo") ? [{ icon: Truck, label: "Glovo" }] : []),
+                        ...(dashboard?.connected_tools?.pos?.includes("moniepoint") ? [{ icon: ShoppingBag, label: "Moniepoint" }] : []),
+                        ...(dashboard?.connected_tools?.pos?.includes("paystack") ? [{ icon: ShoppingBag, label: "Paystack POS" }] : []),
+                        ...(dashboard?.connected_tools?.google_reviews ? [{ icon: Globe, label: "Google Reviews" }] : []),
                         ...(dashboard?.business?.website ? [{ icon: Globe, label: "Website" }] : []),
                       ].map((c) => (
                         <li key={c.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 12 }} className="bg-secondary/60">
@@ -562,7 +539,7 @@ if (suspended) return (
                       {(dashboard?.team ?? []).map((m: any) => (
                         <div key={m.email} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 8px", borderRadius: 10 }} className="bg-secondary/40">
                           <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center", fontSize: 10, fontWeight: 700 }} className="bg-primary/15 text-primary">
-                            {m.email.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                            {m.email[0].toUpperCase()}
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.email}</div>
@@ -613,4 +590,4 @@ function StatCard({ icon: Icon, label, value, delta, trend, tint }: {
       </div>
     </div>
   );
-  }
+}
