@@ -97,6 +97,8 @@ export default function Home() {
   const revenueData = dashboard?.stats?.daily_revenue ?? [];
 const recentOrders = dashboard?.stats?.recent_orders ?? [];
 
+  if (!checking && dashboard) return <pre style={{color:"white",padding:24,fontSize:12}}>{JSON.stringify(dashboard,null,2)}</pre>;
+
 
 if (suspended) return (
   <div style={{ background: "#080502", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
