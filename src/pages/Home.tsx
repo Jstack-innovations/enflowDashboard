@@ -97,9 +97,6 @@ export default function Home() {
   const revenueData = dashboard?.stats?.daily_revenue ?? [];
 const recentOrders = dashboard?.stats?.recent_orders ?? [];
 
-  if (!checking && dashboard) return <pre style={{color:"white",padding:24,fontSize:12}}>{JSON.stringify(dashboard,null,2)}</pre>;
-
-
 if (suspended) return (
   <div style={{ background: "#080502", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
     <div style={{ background: "rgba(255,238,215,0.02)", border: "1px solid rgba(214,168,106,0.15)", borderRadius: 16, padding: "36px 28px", maxWidth: 400, width: "100%", textAlign: "center" }}>
@@ -563,12 +560,12 @@ if (suspended) return (
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       {(dashboard?.team ?? []).map((m: any) => (
-                        <div key={m.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 8px", borderRadius: 10 }} className="bg-secondary/40">
+                        <div key={m.email} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 8px", borderRadius: 10 }} className="bg-secondary/40">
                           <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center", fontSize: 10, fontWeight: 700 }} className="bg-primary/15 text-primary">
-                            {m.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                            {m.email.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</div>
+                            <div style={{ fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.email}</div>
                             <div style={{ fontSize: 10, textTransform: "capitalize", letterSpacing: 0.5 }} className="text-muted-foreground">{m.role.replace("_", " ")}</div>
                           </div>
                           <Circle style={{ width: 7, height: 7, flexShrink: 0 }} className="fill-primary text-primary" />
@@ -616,4 +613,4 @@ function StatCard({ icon: Icon, label, value, delta, trend, tint }: {
       </div>
     </div>
   );
-}
+  }
