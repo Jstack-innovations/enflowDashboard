@@ -325,7 +325,16 @@ export default function Home() {
 
             {dashboard && (
               <StatusBanner
-                status={dashboard.account.status}
+                status={(() => {
+                  const s = dashboard.account.status;
+                  if (s === "trial" && dashboard.account.trial_ends_at) {
+                    if (new Date(dashboard.account.trial_ends_at) < new Date()) return "expired";
+                  }
+                  if (s === "active" && dashboard.account.renewal_date) {
+                    if (new Date(dashboard.account.renewal_date) < new Date()) return "expired";
+                  }
+                  return s;
+                })() as "trial" | "expired" | "cancelled" | "active"}
                 plan={dashboard.account.plan}
                 trialEndsAt={dashboard.account.trial_ends_at}
                 renewalDate={dashboard.account.renewal_date}
@@ -590,4 +599,4 @@ function StatCard({ icon: Icon, label, value, delta, trend, tint }: {
       </div>
     </div>
   );
-}
+      }
