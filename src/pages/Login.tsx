@@ -67,10 +67,17 @@ export default function Login() {
           min-height: 100vh;
           background: #09080f;
           display: flex;
+          flex-direction: column;
           font-family: 'Inter', system-ui, sans-serif;
           color: #e2e2e2;
           position: relative;
           overflow: hidden;
+        }
+
+        @media (min-width: 960px) {
+          .login-root {
+            flex-direction: row;
+          }
         }
 
         /* Ambient blobs */
@@ -100,30 +107,42 @@ export default function Login() {
 
         /* Left panel */
         .left-panel {
-          display: none;
           flex: 1;
+          display: flex;
           flex-direction: column;
-          justify-content: space-between;
-          padding: 48px 56px;
-          border-right: 1px solid rgba(255,255,255,0.04);
+          justify-content: center;
+          padding: 40px 32px 32px;
           position: relative;
           z-index: 1;
         }
+
         @media (min-width: 960px) {
-          .left-panel { display: flex; }
+          .left-panel {
+            justify-content: space-between;
+            padding: 48px 56px;
+            border-right: 1px solid rgba(255,255,255,0.04);
+            min-height: 100vh;
+          }
         }
 
         .left-logo {
           display: flex;
           align-items: center;
           gap: 10px;
+          margin-bottom: 36px;
         }
+
+        @media (min-width: 960px) {
+          .left-logo { margin-bottom: 0; }
+        }
+
         .left-logo-mark {
           width: 36px; height: 36px;
           background: linear-gradient(135deg, #d6a86a, #b8864a);
           border-radius: 10px;
           display: flex; align-items: center; justify-content: center;
           font-size: 16px; font-weight: 800; color: #09080f;
+          flex-shrink: 0;
         }
         .left-logo-text {
           font-size: 15px; font-weight: 600; color: #fff; letter-spacing: 0.3px;
@@ -132,17 +151,29 @@ export default function Login() {
           font-size: 10px; color: #666; letter-spacing: 2px; text-transform: uppercase;
         }
 
-        .left-headline {
-          max-width: 380px;
+        .left-body {
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
         }
+
+        @media (min-width: 960px) {
+          .left-body { gap: 32px; }
+        }
+
         .left-headline h2 {
-          font-size: 38px;
+          font-size: 32px;
           font-weight: 300;
           line-height: 1.2;
           color: #fff;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
           letter-spacing: -0.5px;
         }
+
+        @media (min-width: 960px) {
+          .left-headline h2 { font-size: 38px; }
+        }
+
         .left-headline h2 em {
           font-style: italic;
           color: #d6a86a;
@@ -151,15 +182,21 @@ export default function Login() {
           font-size: 14px;
           color: #666;
           line-height: 1.7;
+          max-width: 380px;
         }
 
         .left-stats {
           display: flex;
-          gap: 32px;
+          gap: 24px;
+          flex-wrap: wrap;
         }
-        .stat-item {}
+
+        @media (min-width: 960px) {
+          .left-stats { gap: 32px; }
+        }
+
         .stat-num {
-          font-size: 22px;
+          font-size: 20px;
           font-weight: 700;
           color: #d6a86a;
           letter-spacing: -0.5px;
@@ -171,10 +208,28 @@ export default function Login() {
           letter-spacing: 0.5px;
         }
 
+        .left-bottom-spacer {
+          display: none;
+        }
+        @media (min-width: 960px) {
+          .left-bottom-spacer { display: block; height: 1px; }
+        }
+
+        /* Divider between panels on mobile */
+        .panel-divider {
+          height: 1px;
+          background: rgba(255,255,255,0.05);
+          margin: 0 32px;
+          position: relative;
+          z-index: 1;
+        }
+        @media (min-width: 960px) {
+          .panel-divider { display: none; }
+        }
+
         /* Right panel */
         .right-panel {
           width: 100%;
-          max-width: 480px;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -182,18 +237,13 @@ export default function Login() {
           position: relative;
           z-index: 1;
         }
-        @media (min-width: 960px) {
-          .right-panel { padding: 48px 56px; }
-        }
 
-        .mobile-logo {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 40px;
-        }
         @media (min-width: 960px) {
-          .mobile-logo { display: none; }
+          .right-panel {
+            max-width: 480px;
+            padding: 48px 56px;
+            min-height: 100vh;
+          }
         }
 
         .form-eyebrow {
@@ -334,7 +384,6 @@ export default function Login() {
           text-align: center;
           font-size: 11px;
           color: #2a2a2a;
-          margin-top: 32px;
           letter-spacing: 0.5px;
         }
       `}</style>
@@ -344,7 +393,7 @@ export default function Login() {
         <div className="blob blob-2" />
         <div className="blob blob-3" />
 
-        {/* Left Panel */}
+        {/* Left Panel — always visible */}
         <div className="left-panel">
           <div className="left-logo">
             <div className="left-logo-mark">E</div>
@@ -354,46 +403,43 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="left-headline">
-            <h2>Run your restaurant <em>smarter.</em></h2>
-            <p>
-              Enflow gives African food businesses the tools to manage teams,
-              track operations, and unlock AI-powered insights — all in one place.
-            </p>
+          <div className="left-body">
+            <div className="left-headline">
+              <h2>Run your restaurant <em>smarter.</em></h2>
+              <p>
+                Enflow gives African food businesses the tools to manage teams,
+                track operations, and unlock AI-powered insights — all in one place.
+              </p>
+            </div>
+
+            <div className="left-stats">
+              <div>
+                <div className="stat-num">24/7</div>
+                <div className="stat-label">AI Monitoring</div>
+              </div>
+              <div>
+                <div className="stat-num">Zara</div>
+                <div className="stat-label">Your AI Assistant</div>
+              </div>
+              <div>
+                <div className="stat-num">Africa</div>
+                <div className="stat-label">Built for here</div>
+              </div>
+            </div>
           </div>
 
-          <div className="left-stats">
-            <div className="stat-item">
-              <div className="stat-num">24/7</div>
-              <div className="stat-label">AI Monitoring</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">Zara</div>
-              <div className="stat-label">Your AI Assistant</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">Africa</div>
-              <div className="stat-label">Built for here</div>
-            </div>
-          </div>
+          <div className="left-bottom-spacer" />
         </div>
 
-        {/* Right Panel */}
-        <div className="right-panel">
-          {/* Mobile logo */}
-          <div className="mobile-logo">
-            <div className="left-logo-mark">E</div>
-            <div>
-              <div className="left-logo-text">Enflow</div>
-              <div className="left-logo-sub">by Jstack Innovations</div>
-            </div>
-          </div>
+        {/* Divider on mobile */}
+        <div className="panel-divider" />
 
+        {/* Right Panel — form */}
+        <div className="right-panel">
           <div className="form-eyebrow">Secure Sign In</div>
           <h1 className="form-title">Welcome <strong>back.</strong></h1>
           <p className="form-sub">Sign in to access your operations dashboard.</p>
 
-          {/* Email */}
           <div className="field">
             <label className="field-label">Email Address</label>
             <input
@@ -407,7 +453,6 @@ export default function Login() {
             />
           </div>
 
-          {/* Password */}
           <div className="field">
             <label className="field-label">Password</label>
             <div className="password-wrap">
@@ -434,7 +479,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Message */}
           {message && (
             <div className={`msg-box ${status === "error" ? "msg-error" : "msg-success"}`}>
               <span>{status === "success" ? "✓" : "⚠"}</span>
@@ -442,7 +486,6 @@ export default function Login() {
             </div>
           )}
 
-          {/* Submit */}
           <button
             className="submit-btn"
             onClick={handleLogin}
@@ -463,4 +506,4 @@ export default function Login() {
       </div>
     </>
   );
-        }
+}
