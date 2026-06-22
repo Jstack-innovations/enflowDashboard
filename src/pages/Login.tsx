@@ -5,25 +5,14 @@ import { Eye, EyeOff } from "lucide-react";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
-const shimmerStyle: React.CSSProperties = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "40px",
-  height: "100%",
-  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
-  animation: "enflow-shimmer 2.5s infinite",
-  pointerEvents: "none",
-};
-
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail]             = useState("");
-  const [password, setPassword]       = useState("");
+  const [email, setEmail]               = useState("");
+  const [password, setPassword]         = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [status, setStatus]           = useState<FormState>("idle");
-  const [message, setMessage]         = useState("");
-  
+  const [status, setStatus]             = useState<FormState>("idle");
+  const [message, setMessage]           = useState("");
+
   useEffect(() => {
     const m = sessionStorage.getItem("auth_message");
     if (m) {
@@ -65,186 +54,413 @@ export default function Login() {
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(214,168,106,0.15)",
-    borderRadius: 10,
-    padding: "13px 16px",
-    color: "#ffffff",
-    fontSize: 14,
-    outline: "none",
-    fontFamily: "inherit",
-    boxSizing: "border-box",
-  };
+  const isDisabled = status === "loading" || status === "success";
 
   return (
     <>
       <style>{`
-        @keyframes enflow-shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(400%); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .login-root {
+          min-height: 100vh;
+          background: #09080f;
+          display: flex;
+          font-family: 'Inter', system-ui, sans-serif;
+          color: #e2e2e2;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Ambient blobs */
+        .blob {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(120px);
+          opacity: 0.12;
+          pointer-events: none;
+        }
+        .blob-1 {
+          width: 500px; height: 500px;
+          background: #d6a86a;
+          top: -180px; left: -120px;
+        }
+        .blob-2 {
+          width: 400px; height: 400px;
+          background: #7c5cbf;
+          bottom: -150px; right: -100px;
+        }
+        .blob-3 {
+          width: 300px; height: 300px;
+          background: #d6a86a;
+          bottom: 80px; left: 30%;
+          opacity: 0.06;
+        }
+
+        /* Left panel */
+        .left-panel {
+          display: none;
+          flex: 1;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 48px 56px;
+          border-right: 1px solid rgba(255,255,255,0.04);
+          position: relative;
+          z-index: 1;
+        }
+        @media (min-width: 960px) {
+          .left-panel { display: flex; }
+        }
+
+        .left-logo {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .left-logo-mark {
+          width: 36px; height: 36px;
+          background: linear-gradient(135deg, #d6a86a, #b8864a);
+          border-radius: 10px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 16px; font-weight: 800; color: #09080f;
+        }
+        .left-logo-text {
+          font-size: 15px; font-weight: 600; color: #fff; letter-spacing: 0.3px;
+        }
+        .left-logo-sub {
+          font-size: 10px; color: #666; letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        .left-headline {
+          max-width: 380px;
+        }
+        .left-headline h2 {
+          font-size: 38px;
+          font-weight: 300;
+          line-height: 1.2;
+          color: #fff;
+          margin-bottom: 16px;
+          letter-spacing: -0.5px;
+        }
+        .left-headline h2 em {
+          font-style: italic;
+          color: #d6a86a;
+        }
+        .left-headline p {
+          font-size: 14px;
+          color: #666;
+          line-height: 1.7;
+        }
+
+        .left-stats {
+          display: flex;
+          gap: 32px;
+        }
+        .stat-item {}
+        .stat-num {
+          font-size: 22px;
+          font-weight: 700;
+          color: #d6a86a;
+          letter-spacing: -0.5px;
+        }
+        .stat-label {
+          font-size: 11px;
+          color: #555;
+          margin-top: 2px;
+          letter-spacing: 0.5px;
+        }
+
+        /* Right panel */
+        .right-panel {
+          width: 100%;
+          max-width: 480px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 40px 32px;
+          position: relative;
+          z-index: 1;
+        }
+        @media (min-width: 960px) {
+          .right-panel { padding: 48px 56px; }
+        }
+
+        .mobile-logo {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 40px;
+        }
+        @media (min-width: 960px) {
+          .mobile-logo { display: none; }
+        }
+
+        .form-eyebrow {
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          color: #d6a86a;
+          margin-bottom: 12px;
+        }
+        .form-title {
+          font-size: 28px;
+          font-weight: 300;
+          color: #fff;
+          margin-bottom: 6px;
+          letter-spacing: -0.3px;
+        }
+        .form-title strong { font-weight: 700; }
+        .form-sub {
+          font-size: 13px;
+          color: #555;
+          margin-bottom: 36px;
+          line-height: 1.6;
+        }
+
+        .field { margin-bottom: 16px; }
+        .field-label {
+          display: block;
+          font-size: 10px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #555;
+          margin-bottom: 8px;
+          font-weight: 500;
+        }
+        .field-input {
+          width: 100%;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 12px;
+          padding: 14px 16px;
+          color: #fff;
+          font-size: 14px;
+          outline: none;
+          font-family: inherit;
+          transition: border-color 0.2s, background 0.2s;
+        }
+        .field-input:focus {
+          border-color: rgba(214,168,106,0.4);
+          background: rgba(214,168,106,0.03);
+        }
+        .field-input::placeholder { color: #333; }
+        .field-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .password-wrap { position: relative; }
+        .password-toggle {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #444;
+          display: flex;
+          align-items: center;
+          padding: 0;
+          transition: color 0.2s;
+        }
+        .password-toggle:hover { color: #d6a86a; }
+
+        .msg-box {
+          padding: 11px 14px;
+          border-radius: 10px;
+          font-size: 13px;
+          line-height: 1.5;
+          margin-bottom: 16px;
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        .msg-error {
+          background: rgba(239,68,68,0.06);
+          border: 1px solid rgba(239,68,68,0.2);
+          color: #f87171;
+        }
+        .msg-success {
+          background: rgba(214,168,106,0.06);
+          border: 1px solid rgba(214,168,106,0.2);
+          color: #d6a86a;
+        }
+
+        .submit-btn {
+          width: 100%;
+          padding: 15px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #d6a86a, #b8864a);
+          border: none;
+          color: #09080f;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          cursor: pointer;
+          font-family: inherit;
+          transition: opacity 0.2s, transform 0.15s;
+          margin-bottom: 20px;
+        }
+        .submit-btn:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+        .submit-btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .form-footer {
+          text-align: center;
+          font-size: 12px;
+          color: #444;
+        }
+        .form-footer a {
+          color: #d6a86a;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .form-footer a:hover { text-decoration: underline; }
+
+        .divider {
+          height: 1px;
+          background: rgba(255,255,255,0.04);
+          margin: 24px 0;
+        }
+
+        .copyright {
+          text-align: center;
+          font-size: 11px;
+          color: #2a2a2a;
+          margin-top: 32px;
+          letter-spacing: 0.5px;
         }
       `}</style>
 
-      <div style={{
-        background: "#080502",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        color: "#dddddd",
-      }}>
-        <div style={{ width: "100%", maxWidth: 420 }}>
+      <div className="login-root">
+        <div className="blob blob-1" />
+        <div className="blob blob-2" />
+        <div className="blob blob-3" />
 
-          {/* Brand */}
-          <div style={{ marginBottom: 32 }}>
-            <div style={{
-              display: "inline-block",
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: 3,
-              textTransform: "uppercase",
-              color: "#d6a86a",
-              border: "1px solid rgba(214,168,106,0.25)",
-              borderRadius: 100,
-              padding: "5px 14px",
-              background: "rgba(214,168,106,0.05)",
-              marginBottom: 16,
-              position: "relative",
-              overflow: "hidden",
-            }}>
-              EnflowAI · Restaurant Intelligence
-              <span style={shimmerStyle} />
+        {/* Left Panel */}
+        <div className="left-panel">
+          <div className="left-logo">
+            <div className="left-logo-mark">E</div>
+            <div>
+              <div className="left-logo-text">Enflow</div>
+              <div className="left-logo-sub">by Jstack Innovations</div>
             </div>
-            <h1 style={{ fontSize: 32, fontWeight: 300, lineHeight: 1.15, color: "#ffffff", marginBottom: 8 }}>
-              Welcome <span style={{ color: "#d6a86a", fontStyle: "italic" }}>back.</span>
-            </h1>
-            <p style={{ fontSize: 14, color: "#888", lineHeight: 1.6 }}>
-              Sign in to your dashboard.
+          </div>
+
+          <div className="left-headline">
+            <h2>Run your restaurant <em>smarter.</em></h2>
+            <p>
+              Enflow gives African food businesses the tools to manage teams,
+              track operations, and unlock AI-powered insights — all in one place.
             </p>
           </div>
 
-          {/* Form */}
-          <div style={{
-            background: "rgba(255,238,215,0.02)",
-            border: "1px solid rgba(214,168,106,0.1)",
-            borderRadius: 16,
-            padding: "28px 24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-          }}>
+          <div className="left-stats">
+            <div className="stat-item">
+              <div className="stat-num">24/7</div>
+              <div className="stat-label">AI Monitoring</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-num">Zara</div>
+              <div className="stat-label">Your AI Assistant</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-num">Africa</div>
+              <div className="stat-label">Built for here</div>
+            </div>
+          </div>
+        </div>
 
-            {/* Email */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#666" }}>Email</label>
+        {/* Right Panel */}
+        <div className="right-panel">
+          {/* Mobile logo */}
+          <div className="mobile-logo">
+            <div className="left-logo-mark">E</div>
+            <div>
+              <div className="left-logo-text">Enflow</div>
+              <div className="left-logo-sub">by Jstack Innovations</div>
+            </div>
+          </div>
+
+          <div className="form-eyebrow">Secure Sign In</div>
+          <h1 className="form-title">Welcome <strong>back.</strong></h1>
+          <p className="form-sub">Sign in to access your operations dashboard.</p>
+
+          {/* Email */}
+          <div className="field">
+            <label className="field-label">Email Address</label>
+            <input
+              className="field-input"
+              type="email"
+              placeholder="you@yourbusiness.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleLogin()}
+              disabled={isDisabled}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="field">
+            <label className="field-label">Password</label>
+            <div className="password-wrap">
               <input
-                type="email"
-                placeholder="you@yourbusiness.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                className="field-input"
+                type={showPassword ? "text" : "password"}
+                placeholder="Your password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && handleLogin()}
-                disabled={status === "loading" || status === "success"}
-                style={inputStyle}
+                disabled={isDisabled}
+                style={{ paddingRight: 44 }}
               />
+              <button
+                className="password-toggle"
+                type="button"
+                onClick={() => setShowPassword(p => !p)}
+              >
+                {showPassword
+                  ? <EyeOff style={{ width: 16, height: 16 }} />
+                  : <Eye style={{ width: 16, height: 16 }} />
+                }
+              </button>
             </div>
-
-            {/* Password */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#666" }}>Password</label>
-              <div style={{ position: "relative" }}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Your password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && handleLogin()}
-                  disabled={status === "loading" || status === "success"}
-                  style={{ ...inputStyle, paddingRight: "44px" }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(p => !p)}
-                  style={{
-                    position: "absolute",
-                    right: 14,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    color: "#666",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  {showPassword
-                    ? <EyeOff style={{ width: 16, height: 16 }} />
-                    : <Eye style={{ width: 16, height: 16 }} />
-                  }
-                </button>
-              </div>
-            </div>
-
-            {/* Message */}
-            {message && (
-              <div style={{
-                padding: "10px 14px",
-                borderRadius: 8,
-                fontSize: 13,
-                lineHeight: 1.5,
-                background: status === "error" ? "rgba(239,68,68,0.08)" : "rgba(214,168,106,0.08)",
-                border: `1px solid ${status === "error" ? "rgba(239,68,68,0.25)" : "rgba(214,168,106,0.25)"}`,
-                color: status === "error" ? "#f87171" : "#d6a86a",
-              }}>
-                {status === "success" ? "✓ " : "⚠ "}{message}
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              onClick={handleLogin}
-              disabled={status === "loading" || status === "success"}
-              style={{
-                width: "100%",
-                padding: "14px",
-                borderRadius: 100,
-                background: status === "loading" || status === "success"
-                  ? "rgba(214,168,106,0.4)"
-                  : "linear-gradient(135deg, #d6a86a, #b8864a)",
-                border: "none",
-                color: "#0c0602",
-                fontSize: 13,
-                fontWeight: 700,
-                letterSpacing: 2,
-                textTransform: "uppercase",
-                cursor: status === "loading" || status === "success" ? "not-allowed" : "pointer",
-                fontFamily: "inherit",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              {status === "loading" ? "Signing in..." : status === "success" ? "✓ Redirecting..." : "Sign In →"}
-              {status !== "loading" && status !== "success" && <span style={shimmerStyle} />}
-            </button>
-
-            <p style={{ textAlign: "center", fontSize: 11, color: "#555" }}>
-              No account?{" "}
-<a href="https://plans.getenflowai.online/trial-signup" style={{ color: "#d6a86a", cursor: "pointer", textDecoration: "none" }}>
-  Start free trial
-</a>
-            </p>
           </div>
 
-          <p style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#333" }}>
-            © 2026 jSTack Innovations · ENFLOW
-          </p>
+          {/* Message */}
+          {message && (
+            <div className={`msg-box ${status === "error" ? "msg-error" : "msg-success"}`}>
+              <span>{status === "success" ? "✓" : "⚠"}</span>
+              <span>{message}</span>
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            className="submit-btn"
+            onClick={handleLogin}
+            disabled={isDisabled}
+          >
+            {status === "loading" ? "Signing in..." : status === "success" ? "✓ Redirecting..." : "Sign In →"}
+          </button>
+
+          <div className="form-footer">
+            No account?{" "}
+            <a href="https://plans.getenflowai.online/trial-signup">Start free trial</a>
+          </div>
+
+          <div className="divider" />
+
+          <p className="copyright">© 2026 Jstack Innovations · Enflow</p>
         </div>
       </div>
     </>
   );
-}
+        }
