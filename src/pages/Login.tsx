@@ -130,10 +130,15 @@ export default function Login() {
           align-items: center;
           gap: 10px;
           margin-bottom: 36px;
+          position: sticky;
+          top: 0;
+          z-index: 10;
+          background: #09080f;
+          padding-bottom: 16px;
         }
 
         @media (min-width: 960px) {
-          .left-logo { margin-bottom: 0; }
+          .left-logo { margin-bottom: 0; position: static; background: transparent; padding-bottom: 0; }
         }
 
         .left-logo-mark {
@@ -507,3 +512,4 @@ export default function Login() {
     </>
   );
 }
+
