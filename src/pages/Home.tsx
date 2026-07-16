@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ENFLOW_API } from "../Config/enflowApi";
+import { apiFetch } from "../Config/api";
 import styles from "./Home.module.css";
 import {
   Bell, Search, Plus, ChevronRight, TrendingUp, TrendingDown,
@@ -64,34 +64,33 @@ export default function Home() {
   const [checking, setChecking]   = useState(true);
   const [suspended, setSuspended] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("enflow_token");
-    if (!token) { window.location.href = "/login"; return; }
+useEffect(() => {
+  const token = localStorage.getItem("enflow_token");
+  if (!token) { window.location.href = "/login"; return; }
 
-    fetch(`${ENFLOW_API}/dashboard`, {
-      method: "GET",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-    })
-      .then(async r => {
-        const data = await r.json();
-        if (data.status === "ok") {
-          setDashboard(data.dashboard);
-          setChecking(false);
-        } else {
-          localStorage.removeItem("enflow_token");
-          localStorage.removeItem("enflow_user");
-          localStorage.removeItem("enflow_token_expiry");
-          if (data.message?.toLowerCase().includes("suspended")) {
-            setChecking(false);
-            setSuspended(true);
-          } else {
-            sessionStorage.setItem("auth_message", data.message ?? "Session ended. Please log in again.");
-            window.location.href = "/login";
-          }
-        }
-      })
-      .catch(() => { window.location.href = "/login"; });
-  }, []);
+  apiFetch("/dashboard", {
+    method: "GET",
+    headers: { "Authorization": `Bearer ${token}` },
+  }).then((data) => {
+    if (!data) { window.location.href = "/login"; return; }
+
+    if (data.status === "ok") {
+      setDashboard(data.dashboard);
+      setChecking(false);
+    } else {
+      localStorage.removeItem("enflow_token");
+      localStorage.removeItem("enflow_user");
+      localStorage.removeItem("enflow_token_expiry");
+      if (data.message?.toLowerCase().includes("suspended")) {
+        setChecking(false);
+        setSuspended(true);
+      } else {
+        sessionStorage.setItem("auth_message", data.message ?? "Session ended. Please log in again.");
+        window.location.href = "/login";
+      }
+    }
+  });
+}, []);
 
 
   const revenueData = dashboard?.stats?.daily_revenue ?? [];
@@ -237,18 +236,18 @@ export default function Home() {
             </div>
             <button
               onClick={async () => {
-                const token = localStorage.getItem("enflow_token");
-                if (token) {
-                  await fetch(`${ENFLOW_API}/logout`, {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` },
-                  }).catch(() => {});
-                }
-                localStorage.removeItem("enflow_token");
-                localStorage.removeItem("enflow_user");
-                localStorage.removeItem("enflow_token_expiry");
-                window.location.href = "/login";
-              }}
+  const token = localStorage.getItem("enflow_token");
+  if (token) {
+    await apiFetch("/logout", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+    });
+  }
+  localStorage.removeItem("enflow_token");
+  localStorage.removeItem("enflow_user");
+  localStorage.removeItem("enflow_token_expiry");
+  window.location.href = "/login";
+}}
               className="flex items-center gap-2 px-3 py-2 w-full text-sm text-sidebar-foreground/50 hover:text-sidebar-foreground rounded-lg hover:bg-sidebar-accent/50"
             >
               <LogOut style={{ width: 16, height: 16 }} /> Log out

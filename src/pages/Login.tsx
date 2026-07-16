@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ENFLOW_API } from "../Config/enflowApi";
+import { apiFetch } from "../Config/api";
 import { Eye, EyeOff } from "lucide-react";
 
 type FormState = "idle" | "loading" | "success" | "error";
@@ -22,37 +22,38 @@ export default function Login() {
     }
   }, []);
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      setStatus("error");
-      setMessage("Please enter your email and password.");
-      return;
-    }
-    setStatus("loading");
-    setMessage("");
-    try {
-      const res = await fetch(`${ENFLOW_API}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (data.status === "ok") {
-        localStorage.setItem("enflow_token", data.token);
-        localStorage.setItem("enflow_user", JSON.stringify(data.user));
-        localStorage.setItem("enflow_token_expiry", data.expires);
-        setStatus("success");
-        setMessage("Login successful! Taking you to your dashboard...");
-        setTimeout(() => navigate("/"), 1200);
-      } else {
-        setStatus("error");
-        setMessage(data.message ?? "Something went wrong.");
-      }
-    } catch {
-      setStatus("error");
-      setMessage("Network error. Please check your connection.");
-    }
-  };
+const handleLogin = async () => {
+  if (!email.trim() || !password.trim()) {
+    setStatus("error");
+    setMessage("Please enter your email and password.");
+    return;
+  }
+  setStatus("loading");
+  setMessage("");
+
+  const data = await apiFetch("/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!data) {
+    setStatus("error");
+    setMessage("Network error. Please check your connection.");
+    return;
+  }
+
+  if (data.status === "ok") {
+    localStorage.setItem("enflow_token", data.token);
+    localStorage.setItem("enflow_user", JSON.stringify(data.user));
+    localStorage.setItem("enflow_token_expiry", data.expires);
+    setStatus("success");
+    setMessage("Login successful! Taking you to your dashboard...");
+    setTimeout(() => navigate("/"), 1200);
+  } else {
+    setStatus("error");
+    setMessage(data.message ?? "Something went wrong.");
+  }
+};
 
   const isDisabled = status === "loading" || status === "success";
 
